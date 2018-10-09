@@ -1,0 +1,30 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
+
+    <!-- 当前服务的名称 -->
+    <dubbo:application name="user-service-provider"/>
+
+    <!-- 注册中心的地址 这里注册中心用的是zookeeper -->
+    <dubbo:registry protocol="zookeeper" address="127.0.0.1:2181"/>
+
+    <!-- 指定通信规则（通信协议:通信端口） -->
+    <dubbo:protocol name="dubbo" port="20883"></dubbo:protocol>
+
+    <!-- 需要暴露的服务 -->
+    <dubbo:service interface="com.darling.pubIn.service.UserService" ref="userService" version="1.0.0"/>
+
+    <!-- 需要暴露的服务的实现类 -->
+    <bean id="userService" class="com.darling.user.service.UserServiceImpl"/>
+
+    <!-- 监控中心协议，如果为protocol="registry"，表示从注册中心发现监控中心地址，否则直连监控中心 -->
+    <dubbo:monitor protocol="registry"></dubbo:monitor>
+
+    <!--
+        timeout：超时时间配置
+        retries：重试次数配置(超时报错后重试连接的次数,不含第一次调用,如果目标服务有多个重试的时候会自动切换别的服务)
+     -->
+    <dubbo:provider timeout="2000" retries="6"></dubbo:provider>
+</beans>
